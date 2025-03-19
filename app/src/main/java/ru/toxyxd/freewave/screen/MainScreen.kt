@@ -55,12 +55,12 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
-                            Button(onClick = { viewModel.sendInit() }) {
-                                Text(text = "Send Init")
-                            }
-                            Button(onClick = { viewModel.getAmbientControl() }) {
-                                Text(text = "Get Ambient Control")
-                            }
+//                            Button(onClick = { viewModel.sendInit() }) {
+//                                Text(text = "Send Init")
+//                            }
+//                            Button(onClick = { viewModel.getAmbientControl() }) {
+//                                Text(text = "Get Ambient Control")
+//                            }
                         }
                     }
 

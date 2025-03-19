@@ -10,12 +10,12 @@ data class Request(
         payload.map { it.toByte() }.toByteArray()
     )
 
-    fun toMessage(sequenceNumber: Byte): Message {
-        return Message(messageType, sequenceNumber, payload)
-    }
-
     fun encode(sequenceNumber: Byte): ByteArray {
         return toMessage(sequenceNumber).encode()
+    }
+
+    private fun toMessage(sequenceNumber: Byte): Message {
+        return Message(messageType, sequenceNumber, payload)
     }
 
     override fun equals(other: Any?): Boolean {
