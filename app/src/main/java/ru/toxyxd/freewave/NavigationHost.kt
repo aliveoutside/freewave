@@ -14,10 +14,9 @@ fun NavigationHost(modifier: Modifier = Modifier) {
 
     NavHost(modifier = modifier, navController = navController, startDestination = NavRoutes.BluetoothRequest) {
         composable<NavRoutes.BluetoothRequest> {
-            BluetoothRequest(modifier = Modifier,
-                onPermissionGranted = {
-                    navController.navigate(NavRoutes.Main)
-                }
+            BluetoothRequest(onPermissionGranted = {
+                navController.navigate(NavRoutes.Main)
+            }
             )
         }
         composable<NavRoutes.Main> {
