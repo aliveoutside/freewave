@@ -12,7 +12,7 @@ import ru.toxyxd.freewave.screen.MainScreen
 fun NavigationHost(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
 
-    NavHost(modifier = modifier, navController = navController, startDestination = NavRoutes.Main) {
+    NavHost(modifier = modifier, navController = navController, startDestination = NavRoutes.BluetoothRequest) {
         composable<NavRoutes.BluetoothRequest> {
             BluetoothRequest(modifier = Modifier,
                 onPermissionGranted = {

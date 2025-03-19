@@ -1,9 +1,8 @@
 package ru.toxyxd.freewave
 
 import android.os.Build
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -16,12 +15,12 @@ fun BluetoothRequest(modifier: Modifier, onPermissionGranted: () -> Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) android.Manifest.permission.BLUETOOTH_CONNECT
         else android.Manifest.permission.BLUETOOTH
     )
-    Scaffold {
         when {
-            state.status.isGranted -> ScanScreen(modifier = modifier.padding(it))
+            state.status.isGranted -> onPermissionGranted()
             else -> {
-                onPermissionGranted()
+                LaunchedEffect(state) {
+                    state.launchPermissionRequest()
+                }
             }
         }
-    }
 }
