@@ -1,4 +1,4 @@
-# Sony Bluetooth Controller
+# Freewave
 
 ## Description
 Android application for controlling Sony devices via Bluetooth. The app allows scanning, finding, and connecting to Sony devices, as well as managing their functions.
