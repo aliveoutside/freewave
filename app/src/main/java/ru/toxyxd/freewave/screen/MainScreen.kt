@@ -3,9 +3,7 @@ package ru.toxyxd.freewave.screen
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,9 +19,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.toxyxd.freewave.DI
 import ru.toxyxd.freewave.bluetooth.BluetoothController
-import ru.toxyxd.freewave.bluetooth.protocol.requests.AmbientControl
-import ru.toxyxd.freewave.bluetooth.protocol.requests.Init
 import ru.toxyxd.freewave.screen.component.AmbientSoundComponent
 import ru.toxyxd.freewave.ui.component.Button
 
@@ -52,16 +49,6 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
                     is BluetoothController.ConnectionState.Connected -> {
                         Text(text = "Connected")
                         AmbientSoundComponent()
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-//                            Button(onClick = { viewModel.sendInit() }) {
-//                                Text(text = "Send Init")
-//                            }
-//                            Button(onClick = { viewModel.getAmbientControl() }) {
-//                                Text(text = "Get Ambient Control")
-//                            }
-                        }
                     }
 
                     is BluetoothController.ConnectionState.Disconnected -> {
@@ -89,7 +76,7 @@ class MainViewModel : ViewModel() {
         MutableStateFlow<BluetoothController.ConnectionState>(BluetoothController.ConnectionState.Disconnected)
     val bluetoothControllerState = _bluetoothControllerState.asStateFlow()
 
-    private val bluetoothAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+    private val bluetoothAdapter: BluetoothAdapter = DI.bluetoothManager.adapter
     private var bluetoothDevice: BluetoothDevice? = null
     private var bluetoothController: BluetoothController
 
@@ -125,18 +112,6 @@ class MainViewModel : ViewModel() {
     fun connect() {
         viewModelScope.launch(Dispatchers.IO) {
             bluetoothController.connect(bluetoothDevice!!)
-        }
-    }
-
-    fun sendInit() {
-        viewModelScope.launch(Dispatchers.IO) {
-            bluetoothController.get(Init)
-        }
-    }
-
-    fun getAmbientControl() {
-        viewModelScope.launch(Dispatchers.IO) {
-            bluetoothController.get(AmbientControl)
         }
     }
 

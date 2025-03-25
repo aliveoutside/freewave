@@ -172,10 +172,8 @@ object BluetoothController {
     private suspend fun parseAndDispatchMessage(message: Message) {
         val payloadType = PayloadType.fromCode(message.payload[0])
         val feature = when (payloadType) {
-            PayloadType.AMBIENT_SOUND_CONTROL_GET,
             PayloadType.AMBIENT_SOUND_CONTROL_RET,
             PayloadType.AMBIENT_SOUND_CONTROL_NOTIFY,
-            PayloadType.AMBIENT_SOUND_CONTROL_SET,
                 -> AmbientControl.parseResponse(message.payload)
 
             else -> null

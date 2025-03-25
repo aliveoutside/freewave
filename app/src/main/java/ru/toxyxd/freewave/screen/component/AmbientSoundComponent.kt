@@ -37,7 +37,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.toxyxd.freewave.bluetooth.BluetoothController
@@ -62,21 +61,13 @@ fun AmbientSoundComponent(
         }
     }
 
-    val sliderMovementFlow = remember {
-        snapshotFlow { sliderPosition }
-            .filter { it in 1..20 }
-            .sample(150)
-    }
-
     val sliderReleaseFlow = remember {
         snapshotFlow { sliderPosition }
             .filter { it in 1..20 }
             .debounce(100)
     }
+
     LaunchedEffect(Unit) {
-        launch {
-            sliderMovementFlow.collect { viewModel.onAmbientSoundChange(it) }
-        }
         launch {
             sliderReleaseFlow.collect { viewModel.onAmbientSoundChange(it) }
         }
@@ -112,7 +103,8 @@ fun AmbientSoundComponent(
                 shape = RoundedCornerShape(8.dp),
             ) {
                 AmbientControl.Mode.entries.forEach { modeOption ->
-                    DropdownMenuItem(text = { Text(modeOption.name.replace('_', ' ')) }, onClick = {
+                    DropdownMenuItem(
+                        text = { Text(modeOption.name.replace('_', ' ')) }, onClick = {
                         viewModel.onModeChange(modeOption)
                         dropdownExpanded = false
                     }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
@@ -150,22 +142,18 @@ class AmbientSoundViewModel : ViewModel() {
     val ambientSoundUiState = _ambientSoundUiState.asStateFlow()
 
     init {
-        viewModelScope.apply {
-            launch {
-                controller.eventsFlow.filterIsInstance(AmbientControl::class).collect { event ->
-                    _ambientSoundUiState.update {
-                        AmbientSoundUiState(
-                            mode = event.mode,
-                            focusOnVoice = event.focusOnVoice,
-                            ambientSound = event.ambientSound
-                        )
-                    }
+        viewModelScope.launch {
+            controller.eventsFlow.filterIsInstance(AmbientControl::class).collect { event ->
+                _ambientSoundUiState.update {
+                    AmbientSoundUiState(
+                        mode = event.mode,
+                        focusOnVoice = event.focusOnVoice,
+                        ambientSound = event.ambientSound
+                    )
                 }
             }
-            launch {
-                controller.get(AmbientControl)
-            }
         }
+        getAmbientControl()
     }
 
     fun onAmbientSoundChange(ambientSound: Int) {
@@ -190,6 +178,12 @@ class AmbientSoundViewModel : ViewModel() {
             focusOnVoice = focusOnVoice,
             ambientSound = ambientSoundUiState.value.ambientSound
         )
+    }
+
+    private fun getAmbientControl() {
+        viewModelScope.launch {
+            controller.get(AmbientControl)
+        }
     }
 
     private fun setAmbientControl(
